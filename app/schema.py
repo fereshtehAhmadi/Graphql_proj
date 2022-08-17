@@ -44,18 +44,35 @@ class QuizInput(graphene.InputObjectType):
     question = graphene.String()
 
 
+class OptionInput(graphene.InputObjectType):
+    option = graphene.String()
+    question = graphene.Int()
+
+
 class CreateQuiz(graphene.Mutation):
     quiz = graphene.Field(QuizType)
     ok = graphene.Boolean(default_value=False)
     
     class Arguments:
-        # question = graphene.String()
         input = QuizInput(required=True)
     
     def mutate(self, info, input):
         quiz_instance = Quiz.objects.create(question=input.question)
         ok = True
         return CreateQuiz(quiz=quiz_instance, ok=ok)
+
+
+class CreateOption(graphene.Mutation):
+    option = graphene.Field(OptionsType)
+    ok = graphene.Boolean(default_value=False)
+    
+    class Arguments:
+        input = OptionInput(required=True)
+    
+    def mutate(self, info, input=None):
+        question = Quiz.objects.get(id=input.question_id)
+        option_instance = Options.objects.create(option=input.option, question=question)
+        return CreateOption(option=option_instance, ok=True)
 
 
 class UpdateQuiz(graphene.Mutation):
@@ -91,6 +108,7 @@ class DeleteQuiz(graphene.Mutation):
 
 class Mutate(graphene.ObjectType):
     create_quiz = CreateQuiz.Field()
+    create_option = CreateOption.Field()
     update_quiz = UpdateQuiz.Field()
     delete_quiz = DeleteQuiz.Field()
     
