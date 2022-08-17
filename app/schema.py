@@ -58,6 +58,23 @@ class CreateQuiz(graphene.Mutation):
         return CreateQuiz(quiz=quiz_instance, ok=ok)
 
 
+class UpdateQuiz(graphene.Mutation):
+    quiz = graphene.Field(QuizType)
+    ok = graphene.Boolean(default_value=False)
+    
+    class Arguments:
+        id = graphene.Int()
+        input = QuizInput()
+        
+    def mutate(self, info, id, input):
+        quiz_instance = Quiz.objects.get(id=id)
+        quiz_instance.question = input.question if input.question is not None else quiz_instance.question
+        quiz_instance.save()
+        ok = True
+        return UpdateQuiz(quiz=quiz_instance, ok=ok)
+
+
 class Mutate(graphene.ObjectType):
-    create_quize = CreateQuiz.Field()
+    create_quiz = CreateQuiz.Field()
+    update_quiz = UpdateQuiz.Field()
     
