@@ -74,7 +74,23 @@ class UpdateQuiz(graphene.Mutation):
         return UpdateQuiz(quiz=quiz_instance, ok=ok)
 
 
+class DeleteQuiz(graphene.Mutation):
+    quiz = graphene.Field(QuizType)
+    ok = graphene.Boolean(default_value=False)
+    
+    class Arguments:
+        id = graphene.Int()
+        input = QuizInput()
+        
+    def mutate(self, info, id, input):
+        quiz_instance = Quiz.objects.get(id=id)
+        quiz_instance.delete()
+        ok = True
+        return UpdateQuiz(quiz=quiz_instance, ok=ok)
+
+
 class Mutate(graphene.ObjectType):
     create_quiz = CreateQuiz.Field()
     update_quiz = UpdateQuiz.Field()
+    delete_quiz = DeleteQuiz.Field()
     
