@@ -1,11 +1,8 @@
 import graphene
+import app.schema
 
 
-class Query(graphene.ObjectType):
-    hello = graphene.String()
-    
-    def resolve_hello(root, info):
-        return 'hello world'
-    
+class Query(app.schema.AppQuery, graphene.ObjectType):
+    pass
 
 schema = graphene.Schema(query=Query)

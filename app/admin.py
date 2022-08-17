@@ -1,3 +1,6 @@
 from django.contrib import admin
+from app.models import Quiz, Options
 
-# Register your models here.
+
+admin.site.register(Quiz)
+admin.site.register(Options)
