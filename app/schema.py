@@ -38,3 +38,26 @@ class AppQuery(ObjectType):
             return Options.objects.get(id=id)
         else:
             return None
+
+
+class QuizInput(graphene.InputObjectType):
+    question = graphene.String()
+
+
+class CreateQuiz(graphene.Mutation):
+    quiz = graphene.Field(QuizType)
+    ok = graphene.Boolean(default_value=False)
+    
+    class Arguments:
+        # question = graphene.String()
+        input = QuizInput(required=True)
+    
+    def mutate(self, info, input):
+        quiz_instance = Quiz.objects.create(question=input.question)
+        ok = True
+        return CreateQuiz(quiz=quiz_instance, ok=ok)
+
+
+class Mutate(graphene.ObjectType):
+    create_quize = CreateQuiz.Field()
+    
